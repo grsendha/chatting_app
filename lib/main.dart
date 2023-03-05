@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:we_chat/screens/auth/login_screen.dart';
 import 'package:we_chat/screens/home_screen.dart';
 
 void main() => runApp(const MyApp());
@@ -9,22 +10,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'We Chat',
-        theme: ThemeData(
-          appBarTheme: const AppBarTheme(
-            centerTitle: true,
-            elevation: 1,
-            iconTheme: IconThemeData(
-              color: Colors.black,
-            ),
-            titleTextStyle: TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.normal,
-              fontSize: 19,
-            ),
+      debugShowCheckedModeBanner: false,
+      title: 'We Chat',
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          color: Colors.white,
+          elevation: 1,
+          iconTheme: IconThemeData(
+            color: Colors.black,
           ),
-          backgroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.normal,
+            fontSize: 19,
+          ),
         ),
-        home: const HomeScreen());
+        backgroundColor: Colors.white,
+      ),
+      home: const LoginScreen(),
+    );
   }
 }
