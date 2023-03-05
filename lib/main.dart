@@ -1,8 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:we_chat/screens/auth/login_screen.dart';
 import 'package:we_chat/screens/home_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:we_chat/screens/splash_screen.dart';
+import 'firebase_options.dart';
 
-void main() => runApp(const MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  //enter full screen
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+  //for setting orientation to portrait only
+  SystemChrome.setPreferredOrientations(
+          [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
+      .then((value) async {
+    await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform);
+    runApp(const MyApp());
+  });
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -28,7 +44,7 @@ class MyApp extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
       ),
-      home: const LoginScreen(),
+      home: const HomeScreen(),
     );
   }
 }
