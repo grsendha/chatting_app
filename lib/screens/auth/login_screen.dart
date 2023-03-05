@@ -1,8 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
+import 'package:we_chat/screens/home_screen.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
+  bool isAnimate = false;
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 500), () {
+      setState(() {
+        isAnimate = true;
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -14,15 +32,20 @@ class LoginScreen extends StatelessWidget {
       ),
       body: Stack(
         children: [
-          Positioned(
+          //logo
+          AnimatedPositioned(
             // top: MediaQuery.of(context).size.height * .15,
             // width: MediaQuery.of(context).size.width * .5,
             // left: MediaQuery.of(context).size.width * .25,
             top: context.screenHeight * .15,
             width: context.screenWidth * .5,
-            left: context.screenWidth * .25,
+            right: isAnimate
+                ? context.screenWidth * .25
+                : -context.screenWidth * .25,
+            duration: const Duration(seconds: 1),
             child: Image.asset('assets/images/chat.png'),
           ),
+          //google signin
           Positioned(
             // top: MediaQuery.of(context).size.height * .15,
             // width: MediaQuery.of(context).size.width * .5,
@@ -37,7 +60,10 @@ class LoginScreen extends StatelessWidget {
                 shape: const StadiumBorder(),
                 elevation: 1,
               ),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const HomeScreen()));
+              },
               icon: Image.asset(
                 'assets/images/search.png',
                 height: context.screenHeight * .03,
@@ -46,7 +72,7 @@ class LoginScreen extends StatelessWidget {
                 text: const TextSpan(
                   style: TextStyle(color: Colors.black, fontSize: 16),
                   children: [
-                    TextSpan(text: 'Sign In With'),
+                    TextSpan(text: 'Login In With'),
                     TextSpan(
                       text: ' Google',
                       style: TextStyle(fontWeight: FontWeight.w500),
