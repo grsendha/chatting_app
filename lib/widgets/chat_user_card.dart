@@ -26,17 +26,22 @@ class _ChatUserCardState extends State<ChatUserCard> {
           //profile picture
           // leading: CircleAvatar(child: Icon(CupertinoIcons.person)),
           // leading: const CircleAvatar(child: Icon(Icons.person_outline)),
-          leading: CachedNetworkImage(
-            placeholder: (context, url) => const CircularProgressIndicator(),
-            imageUrl: widget.user.image,
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(context.screenHeight * 0.3),
+            child: CachedNetworkImage(
+              height: context.screenHeight * 0.055,
+              width: context.screenHeight * 0.055,
+              placeholder: (context, url) => const CircularProgressIndicator(),
+              imageUrl: widget.user.image,
+            ),
           ),
           // leading: CachedNetworkImage(
           //   width: 30,
           //   height: 30,
           //   imageUrl: widget.user.image,
           //   // placeholder: (context, url) => CircularProgressIndicator(),
-          //   errorWidget: (context, url, error) =>
-          //       const CircleAvatar(child: Icon(Icons.person_outline)),
+          //   // errorWidget: (context, url, error) =>
+          //   //     const CircleAvatar(child: Icon(Icons.person_outline)),
           // ),
           //user name
           title: Text(widget.user.name),

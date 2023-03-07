@@ -22,7 +22,7 @@ void main() {
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget { 
   const MyApp({super.key});
 
   @override
@@ -46,7 +46,7 @@ class MyApp extends StatelessWidget {
         ),
         backgroundColor: Colors.white,
       ),
-      home: SplashScreen(),
+      home: HomeScreen(),
     );
   }
 }

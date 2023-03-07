@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:lottie/lottie.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:we_chat/api/apis.dart';
+import 'package:we_chat/screens/profile_screen.dart';
 import '../models/chat_user.dart';
 import '../widgets/chat_user_card.dart';
 
@@ -18,6 +19,13 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<ChatUser> list = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    APIs.getSelfInfo();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -29,7 +37,16 @@ class _HomeScreenState extends State<HomeScreen> {
           //search button button
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
           //more features button
-          IconButton(onPressed: () {}, icon: const Icon(Icons.more_vert)),
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => ProfileScreen(user: APIs.me),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.more_vert)),
         ],
       ),
       //floatingButton
@@ -44,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       body: StreamBuilder(
-        stream: APIs.firestore.collection('users').snapshots(),
+        stream: APIs.getAllUsers(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             //if data is loading
