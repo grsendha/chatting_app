@@ -21,6 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isAnimate = false;
   @override
   void initState() {
+    // ignore: todo
     // TODO: implement initState
     super.initState();
     Future.delayed(const Duration(milliseconds: 500), () {
@@ -32,14 +33,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   _handleGoogleButtonClick() {
     Dialogs.showProgressBar(context);
-    signInWithGoogle().then((user) {
+    signInWithGoogle().then((user) async {
       Navigator.pop(context);
+      //check user is not null
       if (user != null) {
         log('User: $user.user');
         log('User additional Info: $user.additionalUserInfo');
-
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        //check is user is exist to to homescreen
+        if ((await APIs.userExists())) {
+          Navigator.pushReplacement(
+              context, MaterialPageRoute(builder: (_) => const HomeScreen()));
+        } else {
+          //if not the create the user first the go to homescreen
+          APIs.createUser().then((value) => {
+                Navigator.pushReplacement(context,
+                    MaterialPageRoute(builder: (_) => const HomeScreen()))
+              });
+        }
       }
     });
   }
@@ -103,7 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
             height: context.screenHeight * 0.06,
             child: ElevatedButton.icon(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Color.fromARGB(255, 161, 230, 163),
+                backgroundColor: const Color.fromARGB(255, 161, 230, 163),
                 shape: const StadiumBorder(),
                 elevation: 1,
               ),

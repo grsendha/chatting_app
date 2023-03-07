@@ -1,9 +1,12 @@
-import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:velocity_x/velocity_x.dart';
 
+import '../models/chat_user.dart';
+
 class ChatUserCard extends StatefulWidget {
-  const ChatUserCard({super.key});
+  const ChatUserCard({super.key, required this.user});
+  final ChatUser user;
 
   @override
   State<ChatUserCard> createState() => _ChatUserCardState();
@@ -16,19 +19,38 @@ class _ChatUserCardState extends State<ChatUserCard> {
       margin: EdgeInsets.symmetric(
           horizontal: context.screenWidth * .03, vertical: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-      color: Colors.yellow.shade100,
+      color: Colors.white,
       elevation: 1,
-      child: const InkWell(
+      child: InkWell(
         child: ListTile(
           //profile picture
           // leading: CircleAvatar(child: Icon(CupertinoIcons.person)),
-          leading: CircleAvatar(child: Icon(Icons.person_outline)),
+          // leading: const CircleAvatar(child: Icon(Icons.person_outline)),
+          leading: CachedNetworkImage(
+            placeholder: (context, url) => const CircularProgressIndicator(),
+            imageUrl: widget.user.image,
+          ),
+          // leading: CachedNetworkImage(
+          //   width: 30,
+          //   height: 30,
+          //   imageUrl: widget.user.image,
+          //   // placeholder: (context, url) => CircularProgressIndicator(),
+          //   errorWidget: (context, url, error) =>
+          //       const CircleAvatar(child: Icon(Icons.person_outline)),
+          // ),
           //user name
-          title: Text('Demo User'),
+          title: Text(widget.user.name),
           //last message
-          subtitle: Text('Last User Message', maxLines: 1),
+          subtitle: Text(widget.user.about, maxLines: 1),
           //last message time
-          trailing: Text('12:00 PM', style: TextStyle(color: Colors.black54)),
+          trailing: Container(
+            width: 15,
+            height: 15,
+            decoration: BoxDecoration(
+              color: Colors.green,
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
         ),
       ),
     );
