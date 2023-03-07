@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -19,6 +17,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<ChatUser> list = [];
+  final List<ChatUser> _searchList=[];
+  bool isSearching=false;
 
   @override
   void initState() {
@@ -29,12 +29,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //AppBar
+      /* -------------------------------- //AppBar -------------------------------- */
       appBar: AppBar(
         leading: const Icon(CupertinoIcons.home),
         title: const Text('We Chat'),
         actions: [
-          //search button button
+          /* ------------------------- //search button button ------------------------- */
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
           //more features button
           IconButton(
@@ -49,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.more_vert)),
         ],
       ),
-      //floatingButton
+      /* ---------------------------- //floatingButton ---------------------------- */
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 10),
         child: FloatingActionButton(
@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
         stream: APIs.getAllUsers(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
-            //if data is loading
+            /* -------------------------- //if data is loading -------------------------- */
             case ConnectionState.waiting:
             case ConnectionState.none:
               return const Center(child: CircularProgressIndicator());

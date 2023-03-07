@@ -10,9 +10,9 @@ import 'firebase_options.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  //enter full screen
+  /* --------------------------- //enter full screen -------------------------- */
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
-  //for setting orientation to portrait only
+  /* --------------- //for setting orientation to portrait only --------------- */
   SystemChrome.setPreferredOrientations(
           [DeviceOrientation.portraitUp, DeviceOrientation.portraitDown])
       .then((value) async {

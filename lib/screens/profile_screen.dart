@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:velocity_x/velocity_x.dart';
@@ -25,11 +24,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Scaffold(
-          //AppBar
+          /* -------------------------------- //AppBar -------------------------------- */
           appBar: AppBar(
             title: const Text('Profile Screen'),
           ),
-          //floatingButton
+          /* ---------------------------- //floatingButton ---------------------------- */
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: FloatingActionButton.extended(
@@ -38,11 +37,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 Dialogs.showProgressBar(context);
                 await APIs.auth.signOut().then((value) async {
                   await GoogleSignIn().signOut().then((value) {
-                    //removing the progressBar screen
+                    /* -------------------- removing the progressBar screen ------------------- */
                     Navigator.pop(context);
-                    //removing the profile screen which leads to homescreen
+                    /* --------- //removing the profile screen which leads to homescreen -------- */
                     Navigator.pop(context);
-                    //then replacing the homescreen with loginscreen
+                    /* ------------ //then replacing the homescreen with loginscreen ------------ */
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (_) => const LoginScreen()));
                   });
@@ -69,7 +68,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     Stack(
                       children: [
-                        //profile picture
+                        /* ---------------------------- //profile picture --------------------------- */
                         ClipRRect(
                           borderRadius:
                               BorderRadius.circular(context.screenHeight * 0.1),
@@ -82,7 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             imageUrl: widget.user.image,
                           ),
                         ),
-                        //floating button for picture change
+                        /* ------------------ //floating button for picture change ------------------ */
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -101,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(
                       height: context.screenHeight * 0.03,
                     ),
-                    //user email label
+                    /* --------------------------- //user email label --------------------------- */
                     Text(
                       widget.user.email,
                       style: const TextStyle(color: Colors.black, fontSize: 16),
@@ -109,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(
                       height: context.screenHeight * 0.05,
                     ),
-                    //name input field
+                    /* --------------------------- //name input field --------------------------- */
                     TextFormField(
                       initialValue: widget.user.name,
                       onSaved: ((newValue) => APIs.me.name = newValue ?? ''),
@@ -131,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(
                       height: context.screenHeight * 0.02,
                     ),
-                    //about input field
+                    /* --------------------------- //about input field -------------------------- */
                     TextFormField(
                       initialValue: widget.user.about,
                       onSaved: ((newValue) => APIs.me.about = newValue ?? ''),
@@ -153,22 +152,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     SizedBox(
                       height: context.screenHeight * 0.03,
                     ),
-                    //user profile button
+                    /* -------------------------- //user profile button ------------------------- */
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
                           shape: const StadiumBorder(),
                           minimumSize: Size(context.screenWidth * .5,
                               context.screenHeight * .06)),
                       onPressed: () {
-                        //form validation
+                        /* ---------------------------- //form validation --------------------------- */
                         if (_formKey.currentState!.validate()) {
                           //save the form information
                           _formKey.currentState!.save();
-                          //update the data of firestore
+                          /* --------------------- //update the data of firestore --------------------- */
                           APIs.updateUserInfo();
                           log('inside Validator');
                           log(APIs.me.name);
-                          //showing snackbar
+                          /* --------------------------- //showing snackbar --------------------------- */
                           Dialogs.showSnackbar(
                               context, 'Profile Updated Successfully');
                         }

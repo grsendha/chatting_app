@@ -5,15 +5,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:we_chat/models/chat_user.dart';
 
 class APIs {
-  //firebase authentication
+  /* ------------------------ //firebase authentication ----------------------- */
   static FirebaseAuth auth = FirebaseAuth.instance;
-  //firebase database
+  /* --------------------------- //firebase database -------------------------- */
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
   static User get user => auth.currentUser!;
-  //for storing self information
+  /* --------------------- //for storing self information --------------------- */
   static late ChatUser me;
 
-  //check user if exist
+  /* -------------------------- //check user if exist ------------------------- */
   static Future<bool> userExists() async {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
@@ -48,7 +48,7 @@ class APIs {
         .set(chatUser.toJson());
   }
 
-  //getting all users from firestore database
+  /* --------------- //getting all users from firestore database -------------- */
   static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
     return firestore
         .collection('users')
