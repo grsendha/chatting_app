@@ -1,8 +1,13 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:developer';
+import 'dart:io';
+import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:velocity_x/velocity_x.dart';
 import 'package:we_chat/api/apis.dart';
 import 'package:we_chat/screens/auth/login_screen.dart';
@@ -19,6 +24,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
+  String? _image;
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -65,29 +71,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       width: context.screenWidth,
                       height: context.screenHeight * 0.03,
                     ),
-
                     Stack(
                       children: [
                         /* ---------------------------- //profile picture --------------------------- */
-                        ClipRRect(
-                          borderRadius:
-                              BorderRadius.circular(context.screenHeight * 0.1),
-                          child: CachedNetworkImage(
-                            height: context.screenHeight * 0.2,
-                            width: context.screenHeight * 0.2,
-                            fit: BoxFit.fill,
-                            placeholder: (context, url) =>
-                                const CircularProgressIndicator(),
-                            imageUrl: widget.user.image,
-                          ),
-                        ),
+                        _image != null
+                            /* ------------------------------ //local image ----------------------------- */
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                    context.screenHeight * 0.1),
+                                child: Image.file(
+                                  File(_image!),
+                                  height: context.screenHeight * 0.2,
+                                  width: context.screenHeight * 0.2,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            /* --------------------------- //image from server -------------------------- */
+                            : ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                    context.screenHeight * 0.1),
+                                child: CachedNetworkImage(
+                                  height: context.screenHeight * 0.2,
+                                  width: context.screenHeight * 0.2,
+                                  fit: BoxFit.cover,
+                                  placeholder: (context, url) =>
+                                      const CircularProgressIndicator(),
+                                  imageUrl: widget.user.image,
+                                ),
+                              ),
                         /* ------------------ //floating button for picture change ------------------ */
                         Positioned(
                           bottom: 0,
                           right: 0,
                           child: MaterialButton(
                             shape: const CircleBorder(),
-                            onPressed: () {},
+                            onPressed: () {
+                              showBottomSheet();
+                            },
                             color: Colors.black,
                             child: const Icon(
                               Icons.edit,
@@ -184,5 +204,93 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
           )),
     );
+  }
+
+  void showBottomSheet() {
+    showModalBottomSheet(
+        context: context,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20),
+            topRight: Radius.circular(20),
+          ),
+        ),
+        builder: (_) {
+          return ListView(
+            shrinkWrap: true,
+            padding: EdgeInsets.only(
+                top: context.screenHeight * .02,
+                bottom: context.screenHeight * .05),
+            children: [
+              const Text(
+                'Pick Profile Picture',
+                style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(
+                height: 20,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  /* ----------------------------- gallery button ----------------------------- */
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      backgroundColor: Colors.white,
+                      fixedSize: Size(
+                        context.screenWidth * .3,
+                        context.screenHeight * .15,
+                      ),
+                    ),
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      // Pick an image
+                      XFile? image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        log('Image Path:$image.path');
+                        setState(() {
+                          _image = image.path;
+                        });
+                        APIs.updateProfilePicture(File(_image!));
+                        /* ------------------------ //for popping bottomsheet ------------------------ */
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Image.asset('assets/images/gallery.png'),
+                  ),
+                  /* ------------------------------ camera button ----------------------------- */
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      shape: const CircleBorder(),
+                      backgroundColor: Colors.white,
+                      fixedSize: Size(
+                        context.screenWidth * .3,
+                        context.screenHeight * .15,
+                      ),
+                    ),
+                    onPressed: () async {
+                      final ImagePicker picker = ImagePicker();
+                      // Pick an image
+                      XFile? image =
+                          await picker.pickImage(source: ImageSource.camera);
+                      if (image != null) {
+                        log('Image Path:$image.path');
+                        setState(() {
+                          _image = image.path;
+                        });
+                        APIs.updateProfilePicture(File(_image!));
+                        /* ------------------------ //for popping bottomsheet ------------------------ */
+                        Navigator.pop(context);
+                      }
+                    },
+                    child: Image.asset('assets/images/camera.png'),
+                  ),
+                ],
+              )
+            ],
+          );
+        });
   }
 }

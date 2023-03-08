@@ -17,82 +17,143 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<ChatUser> list = [];
-  final List<ChatUser> _searchList=[];
-  bool isSearching=false;
+  final List<ChatUser> _searchList = [];
+  bool isSearching = false;
 
   @override
   void initState() {
+    super.initState();
+    // ignore: todo
     // TODO: implement initState
     APIs.getSelfInfo();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      /* -------------------------------- //AppBar -------------------------------- */
-      appBar: AppBar(
-        leading: const Icon(CupertinoIcons.home),
-        title: const Text('We Chat'),
-        actions: [
-          /* ------------------------- //search button button ------------------------- */
-          IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          //more features button
-          IconButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => ProfileScreen(user: APIs.me),
-                  ),
-                );
-              },
-              icon: const Icon(Icons.more_vert)),
-        ],
-      ),
-      /* ---------------------------- //floatingButton ---------------------------- */
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 10),
-        child: FloatingActionButton(
-          onPressed: () async {
-            await APIs.auth.signOut();
-            await GoogleSignIn().signOut();
-          },
-          child: const Icon(Icons.add_box),
-        ),
-      ),
-      body: StreamBuilder(
-        stream: APIs.getAllUsers(),
-        builder: (context, snapshot) {
-          switch (snapshot.connectionState) {
-            /* -------------------------- //if data is loading -------------------------- */
-            case ConnectionState.waiting:
-            case ConnectionState.none:
-              return const Center(child: CircularProgressIndicator());
-            case ConnectionState.active:
-            case ConnectionState.done:
-              final data = snapshot.data?.docs;
-              list =
-                  data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
-
-              if (list.isNotEmpty) {
-                return ListView.builder(
-                  itemCount: list.length,
-                  padding: EdgeInsets.only(top: context.screenHeight * 0.01),
-                  physics: const BouncingScrollPhysics(),
-                  itemBuilder: ((context, index) {
-                    return ChatUserCard(user: list[index]);
-                  }),
-                );
-              } else {
-                return Center(
-                  child: Lottie.network(
-                    'https://assets1.lottiefiles.com/packages/lf20_rc6CDU.json',
-                    repeat: true,
-                  ),
-                );
-              }
+    return GestureDetector(
+      onTap: (() {
+        /* ---------- for hiding keyboard when a tap is detected on screen ---------- */
+        FocusScope.of(context).unfocus();
+        isSearching = false;
+      }),
+      child: WillPopScope(
+        /* ----- //if search is on and back button is pressed then close search ----- */
+        /* ----------- //or else imple close current screen on back button ---------- */
+        onWillPop: () {
+          if (isSearching) {
+            setState(() {
+              isSearching = !isSearching;
+            });
+            return Future.value(false);
+          } else {
+            return Future.value(true);
           }
         },
+        child: Scaffold(
+          /* -------------------------------- //AppBar -------------------------------- */
+          appBar: AppBar(
+            leading: const Icon(CupertinoIcons.home),
+            title: isSearching
+                ? TextField(
+                    decoration: const InputDecoration(
+                        border: InputBorder.none, hintText: 'Name,email,...'),
+                    autofocus: true,
+                    style: const TextStyle(fontSize: 17, letterSpacing: 0.5),
+                    onChanged: ((value) {
+                      /* ------------------------------ search logic ------------------------------ */
+                      _searchList.clear();
+                      for (var i in list) {
+                        /* ---------------- searching in name and email of every user --------------- */
+                        /* ---------- its like searching of every name and email key value ---------- */
+                        if (i.name
+                                .toLowerCase()
+                                .contains(value.toLowerCase()) ||
+                            i.email
+                                .toLowerCase()
+                                .contains(value.toLowerCase())) {
+                          _searchList.add(i);
+                        }
+                        setState(() {
+                          _searchList;
+                        });
+                      }
+                    }),
+                  )
+                : const Text('We Chat'),
+            actions: [
+              /* ------------------------- //search button button ------------------------- */
+              IconButton(
+                  onPressed: () {
+                    setState(() {
+                      isSearching = !isSearching;
+                    });
+                  },
+                  icon: Icon(isSearching
+                      ? CupertinoIcons.clear_circled_solid
+                      : Icons.search)),
+              /* ------------------------- //more features button ------------------------- */
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ProfileScreen(user: APIs.me),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.more_vert)),
+            ],
+          ),
+          /* ---------------------------- //floatingButton ---------------------------- */
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: FloatingActionButton(
+              onPressed: () async {
+                await APIs.auth.signOut();
+                await GoogleSignIn().signOut();
+              },
+              child: const Icon(Icons.add_box),
+            ),
+          ),
+          body: StreamBuilder(
+            stream: APIs.getAllUsers(),
+            builder: (context, snapshot) {
+              switch (snapshot.connectionState) {
+                /* -------------------------- //if data is loading -------------------------- */
+                case ConnectionState.waiting:
+                case ConnectionState.none:
+                  return const Center(child: CircularProgressIndicator());
+                case ConnectionState.active:
+                case ConnectionState.done:
+                  final data = snapshot.data?.docs;
+                  list =
+                      data?.map((e) => ChatUser.fromJson(e.data())).toList() ??
+                          [];
+
+                  if (list.isNotEmpty) {
+                    return ListView.builder(
+                      itemCount: isSearching ? _searchList.length : list.length,
+                      padding:
+                          EdgeInsets.only(top: context.screenHeight * 0.01),
+                      physics: const BouncingScrollPhysics(),
+                      itemBuilder: ((context, index) {
+                        return ChatUserCard(
+                            user:
+                                isSearching ? _searchList[index] : list[index]);
+                      }),
+                    );
+                  } else {
+                    return Center(
+                      child: Lottie.network(
+                        'https://assets1.lottiefiles.com/packages/lf20_rc6CDU.json',
+                        repeat: true,
+                      ),
+                    );
+                  }
+              }
+            },
+          ),
+        ),
       ),
     );
   }
