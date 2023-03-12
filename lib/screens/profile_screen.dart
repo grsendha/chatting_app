@@ -5,6 +5,7 @@ import 'dart:io';
 import 'dart:async';
 
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:image_picker/image_picker.dart';
@@ -40,6 +41,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: FloatingActionButton.extended(
               backgroundColor: Colors.red,
               onPressed: () async {
+                await APIs.updatedActiveStatus(false);
                 Dialogs.showProgressBar(context);
                 await APIs.auth.signOut().then((value) async {
                   await GoogleSignIn().signOut().then((value) {
@@ -47,6 +49,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     Navigator.pop(context);
                     /* --------- //removing the profile screen which leads to homescreen -------- */
                     Navigator.pop(context);
+
+                    APIs.auth=FirebaseAuth.instance;
                     /* ------------ //then replacing the homescreen with loginscreen ------------ */
                     Navigator.pushReplacement(context,
                         MaterialPageRoute(builder: (_) => const LoginScreen()));
