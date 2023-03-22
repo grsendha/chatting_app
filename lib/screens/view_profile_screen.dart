@@ -1,19 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'dart:developer';
-import 'dart:io';
-import 'dart:async';
-
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:velocity_x/velocity_x.dart';
-import 'package:we_chat/api/apis.dart';
-import 'package:we_chat/helper/my_date_util.dart';
-import 'package:we_chat/screens/auth/login_screen.dart';
-import '../helper/dialogs.dart';
 import '../models/chat_user.dart';
 
 class ViewProfileScreen extends StatefulWidget {

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -247,8 +246,17 @@ class _ChatScreenState extends State<ChatScreen> {
           MaterialButton(
             onPressed: () {
               if (textController.text.isNotEmpty) {
-                log('API send message');
-                APIs.sendMessage(widget.user, textController.text, Type.text);
+                if (list.isEmpty) {
+
+                  /* ----- //on first message add user to my_user collection of chat user ----- */
+                  APIs.sendFirstMessage(
+                      widget.user, textController.text, Type.text);
+                } else {
+                  /* --------------------------- simply send Message -------------------------- */
+                  log('API send message');
+                  APIs.sendMessage(widget.user, textController.text, Type.text);
+                }
+
                 textController.text = '';
               }
             },
